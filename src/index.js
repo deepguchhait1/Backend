@@ -20,14 +20,23 @@ app.use((req, res, next) => {
   next();
 });
 const allowedOrigins = [
-  "http://localhost:5173",
-  "https://frontend-chat-app-sigma.vercel.app"
+  "http://localhost:5173", // for development
+  "https://frontend-chat-app-sigma.vercel.app", // optional if you used this earlier
+  "https://frontend-chat-app-git-main-deeps-projects-3a68181b.vercel.app",
+  "https://frontend-chat-53pl553n6-deeps-projects-3a68181b.vercel.app"
 ];
 
 app.use(cors({
-  origin: allowedOrigins,
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true
 }));
+
 
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
