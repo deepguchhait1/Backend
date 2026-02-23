@@ -8,13 +8,10 @@ import uploadRoutes from "./routes/upload.route.js";
 import callRoutes from "./routes/call.route.js";
 import { connectDB } from "./lib/dbconn.js";
 import cors from "cors";
-import path from "path";
 
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 7000;
-
-const __dirname = path.resolve();
 
 // CORS configuration for development and production
 const allowedOrigins = [
@@ -48,13 +45,14 @@ app.use("/api/chat", chatRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/call", callRoutes);
 
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../frontend/dist")));
-
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
+// Health check endpoint
+app.get("/", (req, res) => {
+  res.json({ 
+    status: "ok", 
+    message: "BatChit Backend API is running",
+    timestamp: new Date().toISOString()
   });
-}
+});
 
 app.listen(PORT, () => {
   connectDB();
