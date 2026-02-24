@@ -26,11 +26,22 @@ app.use(
       // Allow requests with no origin (mobile apps, Postman, etc.)
       if (!origin) return callback(null, true);
       
+      // Check if origin is in allowedOrigins
       if (allowedOrigins.indexOf(origin) !== -1) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
+        return callback(null, true);
       }
+      
+      // Allow all Vercel deployments
+      if (origin && origin.endsWith('.vercel.app')) {
+        return callback(null, true);
+      }
+      
+      // Allow Render deployments
+      if (origin && origin.endsWith('.onrender.com')) {
+        return callback(null, true);
+      }
+      
+      callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
   })
